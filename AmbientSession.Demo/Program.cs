@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using NServiceBus;
 using NServiceBus.AmbientSession;
@@ -30,7 +27,7 @@ namespace AmbientSession.Demo
 
 
             Console.WriteLine("Press any key to send a message, press [esc] to exit.");
-            do
+            while(true)
             {
                 var key = Console.ReadKey();
                 Console.WriteLine();
@@ -45,8 +42,7 @@ namespace AmbientSession.Demo
                 await demoServiceA.PublishEvent();
 
                 await BusSession.Current.Send(new DemoMessage(), sendOptions);
-            } while (true);
-
+            }
         }
     }
 }
