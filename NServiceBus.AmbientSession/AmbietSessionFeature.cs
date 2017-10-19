@@ -12,11 +12,13 @@ namespace NServiceBus.AmbientSession
 
         protected override void Setup(FeatureConfigurationContext context)
         {
-            context.Pipeline.Register(new RegisterCurrentSessionBehavior(), "register the current session in the ambiet bus session.");
+            context.Pipeline.Register(
+                new RegisterCurrentSessionBehavior(), 
+                "register the current session in the ambiet bus session.");
             context.RegisterStartupTask(new RegisterSessionStartupTask());
         }
 
-        class RegisterSessionStartupTask : FeatureStartupTask
+        private class RegisterSessionStartupTask : FeatureStartupTask
         {
             protected override Task OnStart(IMessageSession session)
             {

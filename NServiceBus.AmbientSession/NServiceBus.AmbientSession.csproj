@@ -48,6 +48,8 @@
   <ItemGroup>
     <Compile Include="AmbietSessionFeature.cs" />
     <Compile Include="BusSession.cs" />
+    <Compile Include="BusSessionExtensions.cs" />
+    <Compile Include="Guard.cs" />
     <Compile Include="IBusSession.cs" />
     <Compile Include="MessageSession.cs" />
     <Compile Include="PipelineContextSession.cs" />
