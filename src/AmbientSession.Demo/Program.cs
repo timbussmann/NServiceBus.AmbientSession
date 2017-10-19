@@ -11,7 +11,10 @@ namespace AmbientSession.Demo
         {
             var endpointConfig = new EndpointConfiguration("AmbientSession.Demo");
 
-            endpointConfig.UseTransport<LearningTransport>();
+            var transport = endpointConfig.UseTransport<MsmqTransport>();
+            transport.Routing().RegisterPublisher(typeof(DemoEvent), "AmbientSession.Demo");
+            endpointConfig.SendFailedMessagesTo("error");
+            endpointConfig.UsePersistence<InMemoryPersistence>();
 
             var demoServiceA = new DemoServiceA();
             endpointConfig.RegisterComponents(c => c.RegisterSingleton(demoServiceA));
