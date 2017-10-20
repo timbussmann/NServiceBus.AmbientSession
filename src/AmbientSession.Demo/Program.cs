@@ -11,14 +11,11 @@ namespace AmbientSession.Demo
         {
             var endpointConfig = new EndpointConfiguration("AmbientSession.Demo");
 
-            endpointConfig.UseTransport<LearningTransport>();
+            var transport = endpointConfig.UseTransport<LearningTransport>();
+            transport.Routing().RouteToEndpoint(typeof(DemoMessage), "AmbientSession.Demo");
 
             var demoServiceA = new DemoServiceA();
             endpointConfig.RegisterComponents(c => c.RegisterSingleton(demoServiceA));
-
-            // register IBusSession via DI:
-            endpointConfig.RegisterComponents(c => c.ConfigureComponent(
-                b => BusSession.Current, DependencyLifecycle.InstancePerCall));
 
             // use services resolving IBusSession as dependency
             endpointConfig.RegisterComponents(c => c.ConfigureComponent(typeof(DemoServiceB), DependencyLifecycle.InstancePerUnitOfWork));
@@ -36,12 +33,9 @@ namespace AmbientSession.Demo
                     break;
                 }
 
-                var sendOptions = new SendOptions();
-                sendOptions.RouteToThisEndpoint();
-
                 await demoServiceA.PublishEvent();
 
-                await BusSession.Current.Send(new DemoMessage(), sendOptions);
+                await BusSession.Current.Send(new DemoMessage());
             }
         }
     }
