@@ -16,6 +16,8 @@ namespace NServiceBus.AmbientSession
                 new RegisterCurrentSessionBehavior(), 
                 "register the current session in the ambiet bus session.");
             context.RegisterStartupTask(new RegisterSessionStartupTask());
+
+            context.Container.RegisterSingleton(typeof(IBusSession), new CurrentSessionResolver());
         }
 
         private class RegisterSessionStartupTask : FeatureStartupTask
