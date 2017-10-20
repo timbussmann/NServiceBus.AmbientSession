@@ -10,14 +10,14 @@ namespace NServiceBus.AmbientSession
 
         public static IBusSession Current => PipelineContext.Value ?? MessageSession;
 
-        internal static void SetCurrentPipelineContext(IPipelineContext session)
+        internal static void SetCurrentPipelineContext(PipelineContextSession session)
         {
             if (PipelineContext.Value != null)
             {
                 throw new InvalidOperationException("Attempt to overwrite an existing pipeline context in BusSession.Current.");
             }
 
-            PipelineContext.Value = new PipelineContextSession(session);
+            PipelineContext.Value = session;
         }
 
         internal static void SetMessageSession(IMessageSession messageSession)

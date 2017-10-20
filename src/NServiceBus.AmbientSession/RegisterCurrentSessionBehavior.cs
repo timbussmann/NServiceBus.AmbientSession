@@ -6,11 +6,14 @@ namespace NServiceBus.AmbientSession
 {
     class RegisterCurrentSessionBehavior : Behavior<IIncomingPhysicalMessageContext>
     {
-        public override Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
+        public override async Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
         {
-            BusSession.SetCurrentPipelineContext(context);
+            using (var session = new PipelineContextSession(context))
+            {
+                BusSession.SetCurrentPipelineContext(session);
 
-            return next();
+                await next();
+            }
         }
     }
 }
