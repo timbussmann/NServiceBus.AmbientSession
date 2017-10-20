@@ -13,6 +13,7 @@ namespace AmbientSession.Demo
 
             var transport = endpointConfig.UseTransport<MsmqTransport>();
             transport.Routing().RegisterPublisher(typeof(DemoEvent), "AmbientSession.Demo");
+            transport.Routing().RouteToEndpoint(typeof(DemoMessage), "AmbientSession.Demo");
             endpointConfig.SendFailedMessagesTo("error");
             endpointConfig.UsePersistence<InMemoryPersistence>();
 
@@ -35,12 +36,9 @@ namespace AmbientSession.Demo
                     break;
                 }
 
-                var sendOptions = new SendOptions();
-                sendOptions.RouteToThisEndpoint();
-
                 await demoServiceA.PublishEvent();
 
-                await BusSession.Current.Send(new DemoMessage(), sendOptions);
+                await BusSession.Current.Send(new DemoMessage());
             }
         }
     }
