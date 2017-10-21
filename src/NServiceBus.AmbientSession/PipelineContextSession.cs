@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace NServiceBus.AmbientSession
 {
-    internal class PipelineContextSession : IBusSession, IDisposable
+    class PipelineContextSession : IBusSession, IDisposable
     {
         private static readonly string AccessDisposedSessionExceptionMessage = $"This session has been disposed and can no longer send messages. Ensure to not cache instances {nameof(IBusSession)}.";
 

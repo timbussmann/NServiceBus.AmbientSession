@@ -6,9 +6,16 @@ namespace AmbientSession.Demo
 {
     public class DemoServiceA
     {
+        private IBusSession busSession;
+
+        public DemoServiceA(IBusSession session)
+        {
+            busSession = session;
+        }
+
         public Task PublishEvent()
         {
-            return BusSession.Current.Publish(new DemoEvent(), new PublishOptions());
+            return busSession.Publish(new DemoEvent(), new PublishOptions());
         }
     }
 }

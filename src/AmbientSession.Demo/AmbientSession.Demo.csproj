@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NServiceBus.Autofac" Version="7.0.0-beta0003" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NServiceBus.AmbientSession\NServiceBus.AmbientSession.csproj" />
   </ItemGroup>
 
