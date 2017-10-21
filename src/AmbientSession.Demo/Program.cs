@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Autofac;
 using NServiceBus;
 using NServiceBus.AmbientSession;
 
@@ -9,21 +10,24 @@ namespace AmbientSession.Demo
     {
         static async Task Main(string[] args)
         {
+            var builder = new ContainerBuilder();
+            var container = builder.Build();
             var endpointConfig = new EndpointConfiguration("AmbientSession.Demo");
 
             var transport = endpointConfig.UseTransport<LearningTransport>();
             transport.Routing().RouteToEndpoint(typeof(DemoMessage), "AmbientSession.Demo");
 
-            var demoServiceA = new DemoServiceA();
-            endpointConfig.RegisterComponents(c => c.RegisterSingleton(demoServiceA));
+            endpointConfig.RegisterComponents(c => c.ConfigureComponent(typeof(DemoServiceA), DependencyLifecycle.SingleInstance));
 
             // use services resolving IBusSession as dependency
             endpointConfig.RegisterComponents(c => c.ConfigureComponent(typeof(DemoServiceB), DependencyLifecycle.InstancePerUnitOfWork));
+            endpointConfig.UseContainer<AutofacBuilder>(c => c.ExistingLifetimeScope(container));
 
-            var endpoint = await Endpoint.Start(endpointConfig);
-
+            await Endpoint.Start(endpointConfig);
 
             Console.WriteLine("Press any key to send a message, press [esc] to exit.");
+            var session = container.Resolve<IBusSession>();
+            var demoServiceA = container.Resolve<DemoServiceA>();
             while(true)
             {
                 var key = Console.ReadKey();
@@ -35,7 +39,7 @@ namespace AmbientSession.Demo
 
                 await demoServiceA.PublishEvent();
 
-                await BusSession.Current.Send(new DemoMessage());
+                await session.Send(new DemoMessage());
             }
         }
     }

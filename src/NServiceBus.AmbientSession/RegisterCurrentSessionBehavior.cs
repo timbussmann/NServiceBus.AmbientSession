@@ -4,15 +4,20 @@ using NServiceBus.Pipeline;
 
 namespace NServiceBus.AmbientSession
 {
-    class RegisterCurrentSessionBehavior : Behavior<IIncomingPhysicalMessageContext>
+    class RegisterCurrentSessionBehavior : IBehavior<IIncomingPhysicalMessageContext, IIncomingPhysicalMessageContext>
     {
-        public override async Task Invoke(IIncomingPhysicalMessageContext context, Func<Task> next)
-        {
-            using (var session = new PipelineContextSession(context))
-            {
-                BusSession.SetCurrentPipelineContext(session);
+        private readonly CurrentSessionHolder sessionHolder;
 
-                await next();
+        public RegisterCurrentSessionBehavior(CurrentSessionHolder sessionHolder)
+        {
+            this.sessionHolder = sessionHolder;
+        }
+
+        public async Task Invoke(IIncomingPhysicalMessageContext context, Func<IIncomingPhysicalMessageContext, Task> next)
+        {
+            using (sessionHolder.SetCurrentPipelineContext(context))
+            {
+                await next(context).ConfigureAwait(false);
             }
         }
     }
